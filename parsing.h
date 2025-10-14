@@ -654,10 +654,10 @@ void ExecutionEngine::runSelect(const SelectQuery& q) {
 
     // CHECK SORT BY
     if (!q.sort_by.empty() && !q.sort_type.empty()) {
-        transform(q.sort_type.begin(), q.sort_type.end(), q.sort_type.begin(), ::toupper);
-        if (q.sort_type == "ASC") {
+        
+        if (q.sort_type == "ASC"||q.sort_type == "asc") {
             data = t.sort_asc(data, q.sort_by);
-        } else if (q.sort_type == "DESC") {
+        } else if (q.sort_type == "DESC"||q.sort_type == "desc") {
             data = t.sort_desc(data, q.sort_by);
         } else {
             cout << "Invalid sort type. Use ASC or DESC." << endl;

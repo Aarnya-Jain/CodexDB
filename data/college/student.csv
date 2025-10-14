@@ -1,6 +1,6 @@
-id,name,age,branch
-1,vansh,18,CSE
-2,amolik,19,CSE
-3,aarnya,19,CSE
-4,devesh,18,ECE
-5,samaksh,6,-
+id,name,age,branch,Subjects
+1,vansh,18,CSE,Maths
+2,amolik,19,CSE,physics
+3,aarnya,19,CSE,chem
+4,devesh,18,ECE,-
+5,samaksh,6,-,-
