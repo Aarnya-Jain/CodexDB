@@ -30,36 +30,47 @@ void show_tree(const map<string, vector<string>>& tree)
     }
 }
 
-map<string,vector<string>> fetch_structure(){
-        string path = "./structure/structure.csv";
-        map<string,vector<string>> temp;
-        ifstream file(path);
 
-        if (!file.is_open()) {
-            cerr << "Failed to open file: " << path << endl;
-            return temp;
-        }
+map<string, vector<string>> fetch_structure() {
+    map<string, vector<string>> tree;
+    string path = "./structure/structure.csv";
+    ifstream file(path);
 
-        string line;
-        while (getline(file, line)) {
-            stringstream ss(line);
-            string word;
-            vector<string> parts;
-
-            while (getline(ss, word, ',')) {
-                parts.push_back(word);
-            }
-
-            if (!parts.empty()) {
-                string db = parts[0];
-                vector<string> tables(parts.begin() + 1, parts.end());
-                temp[db] = tables;
-            }
-        }
-
-        file.close();
-        return temp;
+    if (!file.is_open()) {
+        cerr << "Failed to open file: " << path << endl;
+        return tree;
     }
+
+    string line;
+    while (getline(file, line)) {
+        // Trim whitespace
+        line.erase(0, line.find_first_not_of(" \t\r\n"));
+        line.erase(line.find_last_not_of(" \t\r\n") + 1);
+
+        if (line.empty()) continue;  // skip blank lines
+
+        stringstream ss(line);
+        string db, table;
+        getline(ss, db, ',');
+        db = toupper(db);
+
+        if (db.empty()) continue; // skip malformed line
+
+        vector<string> tables;
+        while (getline(ss, table, ',')) {
+            table.erase(0, table.find_first_not_of(" \t\r\n"));
+            table.erase(table.find_last_not_of(" \t\r\n") + 1);
+            if (!table.empty()) {
+                tables.push_back(toupper(table));
+            }
+        }
+
+        tree[db] = tables;
+    }
+
+    file.close();
+    return tree;
+}
 
 // THE TASKS BELOW WORK TO UPDATE THE structure FOLDER --
 
@@ -83,7 +94,7 @@ void save_structure(const map<string, vector<string>> tree) {
     file.close();
 }
 
-void add_database(map<string, vector<string>> tree,string db_name) {
+void add_database(map<string, vector<string>> &tree,string db_name) {
     db_name = toupper(db_name);
     if (tree.find(db_name) != tree.end()) {
         cout << "Database already exists.\n";
@@ -95,7 +106,7 @@ void add_database(map<string, vector<string>> tree,string db_name) {
     cout << "Created Database '" << db_name << "'..."<<endl;
 }
 
-void add_table(map<string, vector<string>> tree,string db_name,string table_name) {
+void add_table(map<string, vector<string>> &tree,string db_name,string table_name) {
     db_name = toupper(db_name);
     table_name = toupper(table_name);
 
@@ -106,7 +117,7 @@ void add_table(map<string, vector<string>> tree,string db_name,string table_name
 
 }
 
-void remove_database(map<string, vector<string>> tree, string db_name) {
+void remove_database(map<string, vector<string>> &tree, string db_name) {
     db_name = toupper(db_name);
 
     if (tree.find(db_name) == tree.end()) {
@@ -117,7 +128,7 @@ void remove_database(map<string, vector<string>> tree, string db_name) {
     save_structure(tree);
 }
 
-void remove_table(map<string, vector<string>> tree, string db_name, string table_name) {
+void remove_table(map<string, vector<string>> &tree, string db_name, string table_name) {
     db_name = toupper(db_name);
     table_name = toupper(table_name);
 

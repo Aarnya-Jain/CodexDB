@@ -577,7 +577,9 @@ void ExecutionEngine::runDrop(const DropQuery& q){
     databases d;
     if(!q.database.empty()){
         d.delete_database(q.database);
-        remove_database(fetch_structure(),q.database);
+        auto tree = fetch_structure();
+        remove_database(tree, q.database);
+        save_structure(tree);
     }
 
     if(!q.table.empty()){
@@ -587,7 +589,10 @@ void ExecutionEngine::runDrop(const DropQuery& q){
 
         else{
             t.delete_table(dbManager->getCurrentDatabase(),q.table);
-            remove_table(fetch_structure(),dbManager->getCurrentDatabase(),q.table);
+            auto tree = fetch_structure();
+            remove_table(tree, dbManager->getCurrentDatabase(), q.table);
+            save_structure(tree);
+
         }
 
     }
@@ -708,7 +713,9 @@ void ExecutionEngine::runCreate(const CreateQuery& q) {
             databases(q.database);
 
             if (filesystem::exists(path)) {
-                add_database(fetch_structure(),q.database);
+                auto tree = fetch_structure();
+                add_database(tree, q.database);
+                save_structure(tree);
             }
             else {
                 cout << "Database not created OR Unknown query ..." << endl;
@@ -726,7 +733,11 @@ void ExecutionEngine::runCreate(const CreateQuery& q) {
             vector<vector<string>> data = t.read(dbManager->getCurrentDatabase(), q.table);
             t.create_table(dbManager->getCurrentDatabase(),q.table);
             t.addrow(q.values,data,dbManager->getCurrentDatabase(),q.table);
-            add_table(fetch_structure(),dbManager->getCurrentDatabase(),q.table);
+
+            auto tree = fetch_structure();
+            add_table(tree, dbManager->getCurrentDatabase(), q.table);
+            save_structure(tree);
+
             cout << q.table << " created successfully in database " << dbManager->getCurrentDatabase() << " ..." << endl;
         }
     }

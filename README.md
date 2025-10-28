@@ -44,7 +44,7 @@ git clone https://github.com/Aarnya-Jain/CodexDB.git
 cd CodexDB
 
 # Build the project
-g++ -std=c++17 -o codex main.cpp
+g++ -std=c++17 main.cpp -o codex
 
 # Run CodexDB CLI
 ./codex
@@ -52,8 +52,10 @@ g++ -std=c++17 -o codex main.cpp
 
 Once running, you can enter SQL-like commands directly in the prompt:
 
+
 ```sql
-CREATE TABLE students (id INT, name TEXT);
-INSERT INTO students VALUES (1, "Aarya");
+CREATE TABLE students VALUES (id , name );
+INSERT INTO students VALUES (1, "John Doe");
 SELECT * FROM students WHERE id = 1;
+
 ```

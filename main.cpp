@@ -82,8 +82,7 @@ int main(){
     {
 
         string currentDB = getCurrentDatabase();
-        cout<<endl;
-        cout << BOLD << RED << currentDB << " " << BOLD << GREEN << "> " << RESET;
+        cout << "\n" <<BOLD << RED << currentDB << " " << BOLD << GREEN << "> " << RESET << flush;
 
         string cmd;
         getline(cin, cmd);
