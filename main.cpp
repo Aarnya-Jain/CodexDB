@@ -1,15 +1,9 @@
-#include <iostream>
-#include <fstream>
-#include <string.h>
-#include <filesystem>
-#include <vector>
 #include <stdlib.h>
-#include "parsing.h"
-#include "lexer.h"
+#include "./src/parsing.h"
+#include "./src/lexer.h"
 
 using namespace std;
 namespace fs = std::filesystem;
-
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
@@ -45,13 +39,31 @@ void printlogo(const std::string& filePath) {
     cout << "\n";
 }
 
-bool check_general(string &cmd){
-    if(!(strcasecmp(cmd.c_str(),"CLEAR")) || !(strcasecmp(cmd.c_str(),"CLS"))){
+void TrimTheColon(string &cmd){
+    // removing the semicolon from the string if present
+        while(!cmd.empty() && (isspace(cmd.back()) || cmd.back() == ';')) {
+            if(cmd.back() == ';') {
+                cmd.pop_back();
+                break; // break loop once ; is found and removed
+            }
+            cmd.pop_back(); // remove spaces before semicolon if any
+        }
+
+        // remove trailing spaces after semicolon is handled
+        while (!cmd.empty() && isspace(cmd.back())) {
+            cmd.pop_back();
+        }
+
+}
+
+bool check_general(vector<string> &tokens){
+
+    if(!(strcasecmp(tokens[0].c_str(),"CLEAR")) || !(strcasecmp(tokens[0].c_str(),"CLS"))){
         system("clear");
         return true;
     }
 
-    if(!(strcasecmp(cmd.c_str(),"SHOW DATABASES"))){
+    if(!(strcasecmp(tokens[0].c_str(),"SHOW")) && !(strcasecmp(tokens[1].c_str(),"DATABASES")) && (tokens.size() == 2)){
 
         // THESE ONES TAKEN FROM THE fetch.h HEADER FILE LOADED IN parsing.h
         show_tree(fetch_structure());
@@ -62,16 +74,6 @@ bool check_general(string &cmd){
 }
 
 int main(){
-    // cout << " .d8888b.                888                        8888888b.  888888b.   " << endl;
-    // cout << "d88P  Y88b               888                        888   Y88b 888  \"88b  " << endl;
-    // cout << "888    888               888                        888    888 888  .88P " << endl;
-    // cout << "888         .d88b.   .d88888  .d88b.  888  888      888    888 8888888K. " << endl;
-    // cout << "888        d88\"\"88b d88\" 888 d8P  Y8b 'Y8bd8P'      888    888 888  \"Y88b " << endl;
-    // cout << "888    888 888  888 888  888 88888888   X88K        888    888 888    888  " << endl;
-    // cout << "Y88b  d88P Y88..88P Y88b 888 Y8b.     .d8\"\"8b.      888  .d88P 888   d88P  " << endl;
-    // cout << " \"Y8888P\"   \"Y88P\"   \"Y88888  \"Y8888  888  888      8888888P\"  8888888P\"  " << endl;
-    // cout << endl;
-    // cout << endl;
 
     printlogo("./public/logo.txt");
 
@@ -84,21 +86,27 @@ int main(){
 
         string cmd;
         getline(cin, cmd);
-        cmd = normalizeSpaces(cmd);
 
         if (cmd.empty()) {
             continue;
         }
 
+        TrimTheColon(cmd); // trim called to handle ';' and other trailing spaces at the end
+
         if(!strcasecmp(cmd.c_str(),"EXIT")){
             cout << "Exiting the running instance ... \n\n";
             break;
-        }
+        } // handling the exit loop
 
-        if(check_general(cmd)) continue;
-
+        // calling the lexer , parser and the execution engine
         lex l;
         vector<string> tokens = l.tokenize(cmd);
+
+            for (auto &t : tokens) cout << "[" << t << "] ";
+            cout << endl;
+
+        // checking for general commands
+        if(check_general(tokens)) continue;
 
         Parser p(tokens);
         ASTNode ast = p.parse();

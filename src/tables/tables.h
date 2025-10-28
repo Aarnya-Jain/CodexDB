@@ -1,21 +1,21 @@
-# include <iostream>
 # include <filesystem>
 # include <fstream>
 # include <sstream>
 # include <variant>
-# include <string>
+# include <string.h>
 # include <vector>
 # include <iomanip>
 # include <algorithm>
 # include <unordered_set>
-
+# include "../mapper/fetch.h"
 
 #define GREEN   "\033[32m"
 #define RESET   "\033[0m"
 
-using namespace std;
-
 void write_table(vector<vector<string>> data, string owner_database,string table_name) {
+    owner_database = toupper(owner_database);
+    table_name = toupper(table_name);
+
     string path = "./data/"+owner_database+"/"+table_name+".csv";
     ofstream file(path);
 
@@ -28,9 +28,9 @@ void write_table(vector<vector<string>> data, string owner_database,string table
         for (size_t i = 0; i < row.size(); ++i) {
             file << row[i];
             if (i != row.size() - 1)
-                file << ","; 
+                file << ",";
         }
-        file << "\n"; 
+        file << "\n";
     }
 
     file.close();
@@ -41,7 +41,7 @@ private:
     vector<vector<string>> data;
     string name;
 public:
-    
+
     vector<vector<string>> read(string owner_database,string table_name);
 
     void create_table(string owner_database,string table_name);
@@ -69,15 +69,19 @@ public:
     void deleterow(vector<vector<string>> data,string colname,string colval,string op,string owner_database,string table_name);
 
     void addcol(vector<vector<string>> data,vector<string> newcol,string owner_database,string table_name);
-    
+
 };
 
 void tables::create_table(string owner_database,string table_name){
+    owner_database = toupper(owner_database);
+    table_name = toupper(table_name);
     string path = "./data/"+owner_database+"/"+table_name+".csv";
     ofstream table(path);
 }
 
 void tables::delete_table(string owner_database, string table_name) {
+    owner_database = toupper(owner_database);
+    table_name = toupper(table_name);
     string path = "./data/" + owner_database + "/" + table_name + ".csv";
     if (filesystem::exists(path)) {
         filesystem::remove(path);
@@ -89,6 +93,8 @@ void tables::delete_table(string owner_database, string table_name) {
 
 vector<vector<string>> tables::read(string owner_database,string table_name){
     data.clear();
+    owner_database = toupper(owner_database);
+    table_name = toupper(table_name);
     string path = "./data/"+owner_database+"/"+table_name+".csv";
     ifstream file(path);
     string line;
@@ -156,7 +162,7 @@ vector<vector<string>> tables::refine(vector<vector<string>> data){
     for(int i=0;i<maxi-mini;i++){
         data[data.size()-1].push_back("-");
     }
-    
+
     // for(int i=0;i<data.size();i++){
     //     while(data[i].size() != maxi){
     //         data[i].push_back("-");
@@ -207,14 +213,14 @@ void tables::addrow(vector<string> rows,vector<vector<string>> data,string owner
         cout << "Values exceed the no. of columns ..." <<endl;
         return;
     }
-    
+
     data.push_back(rows);
-    
+
     data = refine(data);
     write_table(data,owner_database,table_name);
     cout << "Row inserted successfully ..." << endl;
     return;
-    
+
 }
 
 void tables::deletecol(vector<vector<string>> data,string colname,string owner_database,string table_name){
@@ -242,7 +248,7 @@ void tables::deletecol(vector<vector<string>> data,string colname,string owner_d
     write_table(data,owner_database,table_name);
     cout << "Column \""<<colname<<"\" deleted successfully ..." << endl;
     return;
-    
+
 }
 
 void tables::deleterow(vector<vector<string>> data,string colname,string colval,string op,string owner_database,string table_name){
@@ -327,7 +333,7 @@ vector<vector<string>> tables::sort_asc(vector<vector<string>> vec, string colum
             break;
         }
     }
-    
+
     for(int i=1;i<vec.size();i++){
         for(int j=1;j<vec.size()-i;j++){
             if(vec[j][idx]>vec[j+1][idx]){
@@ -346,7 +352,7 @@ vector<vector<string>> tables::sort_desc(vector<vector<string>> vec, string colu
             break;
         }
     }
-    
+
     for(int i=1;i<vec.size();i++){
         for(int j=1;j<vec.size()-i;j++){
             if(vec[j][idx]<vec[j+1][idx]){
@@ -366,7 +372,7 @@ vector<vector<string>> tables::where(vector<vector<string>> &vec, string column,
             idx=i;break;
         }
     }
-    
+
     if(idx==-1){
         return ans;
     }
@@ -413,7 +419,7 @@ vector<vector<string>> tables::where(vector<vector<string>> &vec, string column,
         }
     }
     else{
-        
+
         return ans;
     }
     return ans;
@@ -487,7 +493,7 @@ void tables::update_table(string owner_database,string table_name, string c1name
             }
             if (op == ""){
                 vec[i][c1idx] = c1value;
-            } 
+            }
         }
     }
 

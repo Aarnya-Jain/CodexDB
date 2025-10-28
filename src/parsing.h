@@ -1,30 +1,7 @@
-#include <stdio.h>
-#include <iostream>
-#include <vector>
-#include <string>
 #include <unordered_set>
 #include <unordered_map>
-#include <algorithm>
-#include <filesystem>
 #include <cctype>
-#include <sstream>
-#include "database.h"
-#include "fetch.h"
-
-string normalizeSpaces(const std::string& input) {
-    stringstream ss(input);
-    string word, result;
-
-    while (ss >> word) {
-        if (!result.empty())
-            result += " ";
-        result += word;
-    }
-
-    return result;
-}
-
-using namespace std;
+#include "./databases/database.h"
 
 enum QueryType {
     SELECT,
@@ -111,9 +88,9 @@ class DatabaseManager {
     private:
         static DatabaseManager* instance;
         string current_database;
-        
-        DatabaseManager() {} 
-    
+
+        DatabaseManager() {}
+
     public:
         static DatabaseManager* getInstance() {
             if (!instance) {
@@ -121,16 +98,16 @@ class DatabaseManager {
             }
             return instance;
         }
-    
+
         void setCurrentDatabase(const string& dbName) {
             current_database = dbName;
         }
-    
+
         string getCurrentDatabase() const {
             return current_database;
         }
     };
-    
+
     DatabaseManager* DatabaseManager::instance = nullptr;
 
     inline string getCurrentDatabase() {
@@ -139,7 +116,7 @@ class DatabaseManager {
         if (filesystem::exists(path)){
             return DatabaseManager::getInstance()->getCurrentDatabase();
         }
-        
+
         return "";
     }
 
@@ -161,7 +138,8 @@ public:
 
     bool match(const string& expected) {
         string s = peek();
-        transform(s.begin(), s.end(), s.begin(),::toupper);
+
+        s = toupper(s);
 
         if (s == expected) {
             advance();
@@ -191,24 +169,24 @@ private:
         }
 
         if (peek() == "*") {
-            query.all_operator = advance(); 
-            query.columns = {};            
+            query.all_operator = advance();
+            query.columns = {};
 
             if (!match("FROM")) {
                 cout << "Syntax Error: Expected 'FROM' after '*'" << endl;
                 return { UNKNOWN };
             }
 
-            query.table = advance(); 
-        } 
+            query.table = advance();
+        }
         else {
-           
+
             while (!match("FROM")) {
                 string col = advance();
                 if (col != ",") query.columns.insert(col);
             }
 
-            query.table = advance(); 
+            query.table = advance();
         }
 
         if (match("WHERE")) {
@@ -217,7 +195,7 @@ private:
             query.where_value = advance();
         }
 
- 
+
         if (match("SORT")) {
             if (!match("BY")) {
                 cout << "Syntax Error: Expected 'BY' after 'SORT'" << endl;
@@ -226,10 +204,13 @@ private:
                 query.sort_type = advance();
             }
         }
+
+
         if (match(";")) {
             // ok
-        } 
-        else if (!peek().empty()) {
+        }
+
+        if (!peek().empty()) {
             cout << "Syntax Error: Unexpected token '" << peek() << "' after the statement" << endl;
             return { UNKNOWN };
         }
@@ -239,24 +220,24 @@ private:
 
     ASTNode parseInsert() {
         InsertQuery query;
-    
+
         if (!match("INTO")) {
             cout << "Expected 'INTO' after 'INSERT'" << endl;
             return { UNKNOWN };
         }
-    
+
         if (peek().empty()) {
             cout << "Expected table name after 'INTO'" << endl;
             return { UNKNOWN };
         }
-    
+
         query.table = advance();
-    
+
         if (!match("VALUES")) {
             cout << "Expected 'VALUES' after table name" << endl;
             return { UNKNOWN };
         }
-    
+
         if(!match("(")){
             cout << "Expected '(' after table name" << endl;
             return { UNKNOWN };
@@ -273,7 +254,7 @@ private:
         // }
 
         while(i<tokens.size() && tokens[i]!="(")i++;
-        
+
         i++;
 
         while(i<tokens.size() ){
@@ -295,17 +276,17 @@ private:
 
         // if (match(";")) {
         //     // ok
-        // } 
-        // else if (!peek().empty()) {
+        // }
+        // if (!peek().empty()) {
         //     cout << "Syntax Error: Unexpected token '" << peek() << "' after the statement" << endl;
         //     return { UNKNOWN };
-        // }     
-        
+        // }
+
         query.values=row;
 
         return { INSERT, {}, query };
     }
-    
+
 
     ASTNode parseDelete() {
         DeleteQuery query;
@@ -317,7 +298,7 @@ private:
             }
 
             query.table = advance();
-            
+
             if(match("WHERE")){
                 query.where_col = advance();
                 query.where_operator = advance();
@@ -338,8 +319,8 @@ private:
 
         if (match(";")) {
             // ok
-        } 
-        else if (!peek().empty()) {
+        }
+        if (!peek().empty()) {
             cout << "Syntax Error: Unexpected token '" << peek() << "' after the statement" << endl;
             return { UNKNOWN };
         }
@@ -377,8 +358,8 @@ private:
         }
         if (match(";")) {
             // ok
-        } 
-        else if (!peek().empty()) {
+        }
+        if (!peek().empty()) {
             cout << "Syntax Error: Unexpected token '" << peek() << "' after the statement" << endl;
             return { UNKNOWN };
         }
@@ -428,14 +409,14 @@ private:
         }
         else if(match("DATABASE")){
             query.database = advance();
-            
+
         }
-        
+
 
         if (match(";")) {
             // ok
-        } 
-        else if (!peek().empty()) {
+        }
+        if (!peek().empty()) {
             cout << "Syntax Error: Unexpected token after the statement" << endl;
             return { UNKNOWN };
         }
@@ -447,6 +428,13 @@ private:
     ASTNode parseOpen(){
         OpenQuery query;
         query.database_name = advance();
+        if (match(";")) {
+            // ok
+        }
+        if (!peek().empty()) {
+            cout << "Syntax Error: Unexpected token '" << peek() << "' after the statement" << endl;
+            return { UNKNOWN };
+        }
         return {OPEN,{},{},{},{},{},query};
     }
 
@@ -462,8 +450,8 @@ private:
 
         if (match(";")) {
             // ok
-        } 
-        else if (!peek().empty()) {
+        }
+        if (!peek().empty()) {
             cout << "Syntax Error: Unexpected token '" << peek() << "' after the statement" << endl;
             return { UNKNOWN };
         }
@@ -473,7 +461,7 @@ private:
 
     ASTNode parseAdd(){
         AddQuery query;
-        
+
         if(!match("COLUMN")){
             cout << "Expected 'COLUMN' ..." <<endl;
             return{UNKNOWN};
@@ -489,7 +477,7 @@ private:
         else{
             match("(");
         }
-        
+
         vector<string> row;
         int i=0;
         while(i<tokens.size() && tokens[i]!="(")i++;
@@ -526,14 +514,14 @@ private:
 
         if (match(";")) {
             // ok
-        } 
-        else if (!peek().empty()) {
+        }
+        if (!peek().empty()) {
             cout << "Syntax Error: Unexpected token '" << peek() << "' after the statement" << endl;
             return { UNKNOWN };
         }
 
         return{ADD,{},{},{},{},{},{},{},query};
-        
+
     }
 
 };
@@ -573,7 +561,7 @@ private:
 };
 
 void ExecutionEngine::runOpen(const OpenQuery& q){
-    dbManager->setCurrentDatabase(q.database_name);
+    dbManager->setCurrentDatabase(toupper(q.database_name));
     string path = "./data/" + dbManager->getCurrentDatabase();
     if (filesystem::exists(path)){
         cout << "Using database: " << dbManager->getCurrentDatabase() << endl;
@@ -596,11 +584,12 @@ void ExecutionEngine::runDrop(const DropQuery& q){
         if(dbManager->getCurrentDatabase() == ""){
             cout << "Please Open a Database to drop a Table ..." << endl;
         }
+
         else{
             t.delete_table(dbManager->getCurrentDatabase(),q.table);
             remove_table(fetch_structure(),dbManager->getCurrentDatabase(),q.table);
         }
-        
+
     }
 
     else if(q.database.empty() && q.table.empty()){
@@ -623,7 +612,7 @@ void ExecutionEngine::runInsert(const InsertQuery& q) {
     }
 
     t.addrow(q.values,data,dbManager->getCurrentDatabase(),q.table);
-    
+
 }
 
 void ExecutionEngine::runSelect(const SelectQuery& q) {
@@ -645,7 +634,7 @@ void ExecutionEngine::runSelect(const SelectQuery& q) {
     // CHECK WHERE
     if (!q.where_column.empty() && !q.where_operator.empty() && !q.where_value.empty()) {
         data = t.where(data, q.where_column, q.where_operator, q.where_value);
-        if (data.size() <= 1) { 
+        if (data.size() <= 1) {
             // nothing to show
             cout << "No rows match the WHERE condition ..." << endl;
             return;
@@ -654,7 +643,7 @@ void ExecutionEngine::runSelect(const SelectQuery& q) {
 
     // CHECK SORT BY
     if (!q.sort_by.empty() && !q.sort_type.empty()) {
-        
+
         if (q.sort_type == "ASC"||q.sort_type == "asc") {
             data = t.sort_asc(data, q.sort_by);
         } else if (q.sort_type == "DESC"||q.sort_type == "desc") {
@@ -684,7 +673,7 @@ void ExecutionEngine::runDelete(const DeleteQuery& q) {
         cout << "Please open a database to alter a table ..." << endl;
         return;
     }
-    
+
     vector<vector<string>> data = t.read(dbManager->getCurrentDatabase(), q.table);
 
     if (data.empty()) {
@@ -694,12 +683,12 @@ void ExecutionEngine::runDelete(const DeleteQuery& q) {
 
     if(!q.col.empty()){
         t.deletecol(data,q.col,dbManager->getCurrentDatabase(),q.table);
-        
+
     }
 
     if(!q.where_col.empty() && !q.where_operator.empty() && !q.where_value.empty()){
         t.deleterow(data,q.where_col,q.where_value,q.where_operator,dbManager->getCurrentDatabase(), q.table);
-        
+
     }
 
 }
@@ -711,16 +700,16 @@ void ExecutionEngine::runCreate(const CreateQuery& q) {
             return;
         }
 
-        string path = "./data/" + q.database;
+        string path = "./data/" + toupper(q.database);
 
         if (filesystem::exists(path)) {
-            cout << "Database '" << q.database << "' already exists." << endl;
+            cout << "Database '" << toupper(q.database) << "' already exists." << endl;
         } else {
             databases(q.database);
 
             if (filesystem::exists(path)) {
                 add_database(fetch_structure(),q.database);
-            } 
+            }
             else {
                 cout << "Database not created OR Unknown query ..." << endl;
             }
@@ -751,7 +740,7 @@ void ExecutionEngine::runUpdate(const UpdateQuery& q) {
         return;
     }
 
-    
+
     vector<vector<string>> data = t.read(dbManager->getCurrentDatabase(), q.table);
     if (data.empty()) {
         cout << "Table is empty or does not exist ..." << endl;
@@ -762,19 +751,19 @@ void ExecutionEngine::runUpdate(const UpdateQuery& q) {
     if (!q.where_column.empty() && !q.where_operator.empty() && !q.where_value.empty()) {
         vector<vector<string>> filteredData = t.where(data, q.where_column, q.where_operator, q.where_value);
 
-        if (filteredData.size() <= 1) { 
+        if (filteredData.size() <= 1) {
             cout << "No rows match the WHERE condition ..." << endl;
             return;
         }
-        
+
         t.update_table(dbManager->getCurrentDatabase(), q.table, q.set_column, q.set_value, q.where_column, q.where_value, q.where_operator);
-        
-    } 
+
+    }
 
     else {
         t.update_table(dbManager->getCurrentDatabase(), q.table, q.set_column, q.set_value, "", "", "");
     }
-    
+
 }
 
 void ExecutionEngine::runAdd(const AddQuery& q){

@@ -1,19 +1,18 @@
 #include <stdio.h>
-#include <filesystem>
-#include <string.h>
-#include "tables.h"
-
-using namespace std;
+#include "../tables/tables.h"
 
 class databases{
 public:
 
     databases(string name=""){
-        string path = "./data/"+name; 
+        name = toupper(name);
+        string path = "./data/"+name;
+
         filesystem::create_directories(path);
     }
 
     void delete_database(string name){
+        name = toupper(name);
         string path = "./data/"+name;
         if(!(filesystem::exists(path))){
             cout << "Database \"" << name << "\" not found ... " << endl;
@@ -22,7 +21,7 @@ public:
 
         else{
             cout << "Confirm the deletion of database \"" << name << "\"... (Y/n) : " ;
-            
+
             while(1){
                 char input ;
                 cin >> input;
@@ -51,7 +50,7 @@ public:
                     cout << "enter (Y or n) ... : " ;
                 }
             }
-            
+
         }
 
         return;
