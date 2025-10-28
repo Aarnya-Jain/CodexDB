@@ -4,6 +4,13 @@
 
 ## Overview
 
+
+<img width="1016" height="659" alt="Image" src="https://github.com/user-attachments/assets/2e6fec2a-1aa9-494f-a4ee-a43bf98e6f86" />
+
+
+<img width="932" height="608" alt="Image" src="https://github.com/user-attachments/assets/f93cf7f4-231e-4047-a244-9e5cb5775739" />
+
+
 CodexDB replicates the core functionality of a traditional database engine with a strong emphasis on low-level control and understanding of database internals.
 The system supports core SQL operations, including:
 

@@ -75,6 +75,7 @@ bool check_general(vector<string> &tokens){
 
 int main(){
 
+    system("clear");
     printlogo("./public/logo.txt");
 
     while(1)
@@ -102,8 +103,8 @@ int main(){
         lex l;
         vector<string> tokens = l.tokenize(cmd);
 
-            for (auto &t : tokens) cout << "[" << t << "] ";
-            cout << endl;
+            // for (auto &t : tokens) cout << "[" << t << "] ";
+            // cout << endl;
 
         // checking for general commands
         if(check_general(tokens)) continue;
