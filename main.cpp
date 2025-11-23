@@ -1,6 +1,13 @@
 #include <stdlib.h>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <filesystem>
+#include <fstream>
 #include "./src/parsing.h"
 #include "./src/lexer.h"
+#include "./src/mapper/fetch.h"
+#include "./src/utils.h"
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -59,7 +66,7 @@ void TrimTheColon(string &cmd){
 bool check_general(vector<string> &tokens){
 
     if(!(strcasecmp(tokens[0].c_str(),"CLEAR")) || !(strcasecmp(tokens[0].c_str(),"CLS"))){
-        system("clear");
+        clear_screen();
         return true;
     }
 
@@ -75,7 +82,7 @@ bool check_general(vector<string> &tokens){
 
 int main(){
 
-    system("clear");
+    clear_screen();
     printlogo("./public/logo.txt");
 
     while(1)

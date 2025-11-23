@@ -2,6 +2,9 @@
 #include <unordered_map>
 #include <cctype>
 #include "./databases/database.h"
+#include "./mapper/fetch.h"
+
+using namespace std;
 
 enum QueryType {
     SELECT,
@@ -371,20 +374,9 @@ private:
         if(match("TABLE")){
             query.table = advance();
 
-            if(!match("VALUES")){
-                cout << "Expected 'VALUES' ..." <<endl;
-                return{UNKNOWN};
-            }
-            else{
-                match("VALUES");
-            }
-
             if(!match("(")){
-                cout << "Expected '(' ..." <<endl;
+                cout << "Expected '(' after table name but found '" << peek() << "'" << endl;
                 return{UNKNOWN};
-            }
-            else{
-                match("(");
             }
 
             vector<string> row;
@@ -794,3 +786,4 @@ void ExecutionEngine::runAdd(const AddQuery& q){
     t.addcol(data,q.values,dbManager->getCurrentDatabase(),q.table);
 
 }
+

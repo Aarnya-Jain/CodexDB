@@ -1,18 +1,17 @@
 # CodexDB
 
 <center>
-  
+
   <img width="1024" height="1024" alt="Image" src="https://github.com/user-attachments/assets/80c56173-248f-4107-8d3a-5b91e26dec66" />
-  
+
 </center>
 
-**CodexDB** is a lightweight, CLI-based custom-built Database Management System developed in **C++** from the ground up. It features a fully custom lexer, an AST-based parser, and a query execution engine, providing persistent storage and support for SQL-like query execution.
+**CodexDB** is a lightweight, CLI-based custom-built **in memory** Database Management System developed in **C++** from the ground up. It features a fully custom lexer, an AST-based parser, and a query execution engine, providing persistent storage and support for SQL-like query execution.
 
 ## Overview
 
-
 <center>
-  
+
 <img width="1016" height="659" alt="Image" src="https://github.com/user-attachments/assets/2e6fec2a-1aa9-494f-a4ee-a43bf98e6f86" />
 
 
@@ -36,6 +35,16 @@ The system supports core SQL operations, including:
 * **Execution Engine** – Executes parsed queries with type checking and condition-based retrieval.
 * **Persistent Storage** – Ensures data remains accessible across sessions.
 * **Modular Architecture** – Clear separation of lexing, parsing, and execution phases for maintainability.
+
+## Why Red-Black Tree?
+
+We chose Red-Black Trees for in-memory data storage after benchmarking against AVL Trees and B+ Trees. For 100,000 rows, Red-Black Trees demonstrated the best performance.
+
+| Data Structure | Time (Seconds) |
+| :--- | :--- |
+| **Red-Black Tree** | **3.383** |
+| AVL Tree | 4.148 |
+| B+ Tree | 4.860 |
 
 ## Technologies Used
 
@@ -67,5 +76,6 @@ Once running, you can enter SQL-like commands directly in the prompt:
 CREATE TABLE students VALUES (id , name );
 INSERT INTO students VALUES (1, "John Doe");
 SELECT * FROM students WHERE id = 1;
-
 ```
+
+- Kindly refer to [Syntax Reference](syntaxreference.md) for more information.

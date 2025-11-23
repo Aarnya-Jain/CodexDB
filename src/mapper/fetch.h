@@ -1,5 +1,14 @@
-#include<iostream>
-#include<map>
+#ifndef FETCH_H
+#define FETCH_H
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <fstream>
+#include <sstream>
+#include "../structures/hashmap.h"
+
 using namespace std;
 
 #define RESET   "\033[0m"
@@ -16,10 +25,10 @@ string toupper(const string &str) {
     return result;
 }
 
-void show_tree(const map<string, vector<string>>& tree)
+void show_tree(const HashMap<string, vector<string>>& tree)
 {
     cout << endl;
-    for (const auto& p : tree) {
+    for (auto p : tree) {
         cout << BOLD << BLUE << "[DB] " << RESET << p.first << endl;
 
         for (size_t i = 0; i < p.second.size(); i++) {
@@ -31,8 +40,8 @@ void show_tree(const map<string, vector<string>>& tree)
 }
 
 
-map<string, vector<string>> fetch_structure() {
-    map<string, vector<string>> tree;
+HashMap<string, vector<string>> fetch_structure() {
+    HashMap<string, vector<string>> tree;
     string path = "./structure/structure.csv";
     ifstream file(path);
 
@@ -65,7 +74,7 @@ map<string, vector<string>> fetch_structure() {
             }
         }
 
-        tree[db] = tables;
+        tree.insert(db, tables);
     }
 
     file.close();
@@ -74,7 +83,7 @@ map<string, vector<string>> fetch_structure() {
 
 // THE TASKS BELOW WORK TO UPDATE THE structure FOLDER --
 
-void save_structure(const map<string, vector<string>> tree) {
+void save_structure(HashMap<string, vector<string>>& tree) {
     string path = "./structure/structure.csv";
     ofstream file(path);
 
@@ -83,9 +92,9 @@ void save_structure(const map<string, vector<string>> tree) {
         return;
     }
 
-    for (const auto& [db, tables] : tree) {
-        file << db;
-        for (const string& table : tables) {
+    for (auto p : tree) {
+        file << p.first;
+        for (const string& table : p.second) {
             file << "," << table;
         }
         file << "\n";
@@ -94,9 +103,9 @@ void save_structure(const map<string, vector<string>> tree) {
     file.close();
 }
 
-void add_database(map<string, vector<string>> &tree,string db_name) {
+void add_database(HashMap<string, vector<string>> &tree,string db_name) {
     db_name = toupper(db_name);
-    if (tree.find(db_name) != tree.end()) {
+    if (tree.contains(db_name)) {
         cout << "Database already exists.\n";
         return;
     }
@@ -106,7 +115,7 @@ void add_database(map<string, vector<string>> &tree,string db_name) {
     cout << "Created Database '" << db_name << "'..."<<endl;
 }
 
-void add_table(map<string, vector<string>> &tree,string db_name,string table_name) {
+void add_table(HashMap<string, vector<string>> &tree,string db_name,string table_name) {
     db_name = toupper(db_name);
     table_name = toupper(table_name);
 
@@ -117,10 +126,10 @@ void add_table(map<string, vector<string>> &tree,string db_name,string table_nam
 
 }
 
-void remove_database(map<string, vector<string>> &tree, string db_name) {
+void remove_database(HashMap<string, vector<string>> &tree, string db_name) {
     db_name = toupper(db_name);
 
-    if (tree.find(db_name) == tree.end()) {
+    if (!tree.contains(db_name)) {
         return;
     }
 
@@ -128,7 +137,7 @@ void remove_database(map<string, vector<string>> &tree, string db_name) {
     save_structure(tree);
 }
 
-void remove_table(map<string, vector<string>> &tree, string db_name, string table_name) {
+void remove_table(HashMap<string, vector<string>> &tree, string db_name, string table_name) {
     db_name = toupper(db_name);
     table_name = toupper(table_name);
 
@@ -139,3 +148,5 @@ void remove_table(map<string, vector<string>> &tree, string db_name, string tabl
         save_structure(tree);
     }
 }
+
+#endif // FETCH_H
