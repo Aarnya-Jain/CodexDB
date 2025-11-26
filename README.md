@@ -55,6 +55,7 @@ We chose Red-Black Trees for in-memory data storage after benchmarking against A
 
 ## Usage
 
+- Linux
 ```bash
 # Clone the repository
 git clone https://github.com/Aarnya-Jain/CodexDB.git
@@ -63,10 +64,24 @@ git clone https://github.com/Aarnya-Jain/CodexDB.git
 cd CodexDB
 
 # Build the project
-g++ -std=c++17 main.cpp -o codex  ( Linux )
-g++ -std=c++17 main.cpp -o codex.exe  ( Windows )
+make
+
 # Run CodexDB CLI
 ./codex
+```
+- Windows
+```bash
+# Clone the repository
+git clone https://github.com/Aarnya-Jain/CodexDB.git
+
+# Navigate to the project directory
+cd CodexDB
+
+# Build the project
+mingw32-make
+
+# Run CodexDB CLI
+./codex.exe
 ```
 
 Once running, you can enter SQL-like commands directly in the prompt:
@@ -78,4 +93,4 @@ INSERT INTO students VALUES (1, "John Doe");
 SELECT * FROM students WHERE id = 1;
 ```
 
-- Kindly refer to [Syntax Reference](syntaxreference.md) for more information.
+- Kindly refer to [Syntax Reference](syntaxreference.md) for more information regarding the supported queries.
