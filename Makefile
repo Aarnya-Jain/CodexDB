@@ -2,7 +2,6 @@ CXX := g++
 CXXFLAGS := -std=c++17 -O2 -Wall -I./src
 SRCDIR := src
 
-
 ifeq ($(OS),Windows_NT)
     TARGET := codex.exe
     RM := del /Q /F
@@ -11,24 +10,17 @@ else
     RM := rm -f
 endif
 
-
 SRC := $(wildcard $(SRCDIR)/*.cpp)
 OBJ := $(patsubst %.cpp,%.o,$(SRC))
-
 
 check_filesystem:
  @echo "#include <filesystem>" > fs_test.cpp
  @$(CXX) -std=c++17 -c fs_test.cpp -o fs_test.o 2>nul || \
- ( echo "=====================================================" && \
-   echo "ERROR: Your compiler does NOT support <filesystem>." && \
-   echo "CodexDB requires a C++17 compiler with filesystem." && \
-   echo "Install MinGW-w64 (WinLibs GCC 12 or newer)." && \
-   echo "=====================================================" && \
+ ( echo "ERROR: Your compiler does NOT support <filesystem>." && \
+   echo "Install MinGW-w64 (WinLibs GCC 12+)." && \
    $(RM) fs_test.cpp 2>nul && false )
  @$(RM) fs_test.cpp 2>nul
  @$(RM) fs_test.o 2>nul
-
-
 
 $(TARGET): check_filesystem $(OBJ) main.o
  $(CXX) $(CXXFLAGS) -o $(TARGET) main.o $(OBJ)
