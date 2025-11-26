@@ -63,8 +63,8 @@ git clone https://github.com/Aarnya-Jain/CodexDB.git
 cd CodexDB
 
 # Build the project
-g++ -std=c++17 main.cpp -o codex
-
+g++ -std=c++17 main.cpp -o codex  ( Linux )
+g++ -std=c++17 main.cpp -o codex.exe  ( Windows )
 # Run CodexDB CLI
 ./codex
 ```
