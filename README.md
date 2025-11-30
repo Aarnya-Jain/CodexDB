@@ -1,10 +1,5 @@
 # CodexDB
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/80c56173-248f-4107-8d3a-5b91e26dec66" width="500" height="500" />
-</p>
-
-
 **CodexDB** is a lightweight, CLI-based custom-built **in memory** Database Management System developed in **C++** from the ground up. It features a fully custom lexer, an AST-based parser, and a query execution engine, providing persistent storage and support for SQL-like query execution.
 
 ## Overview
