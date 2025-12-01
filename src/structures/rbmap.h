@@ -9,13 +9,13 @@ using namespace std;
 
 template<typename Key, typename T, typename Compare = std::less<Key>>
 class RBMap {
-    enum Color { RED, BLACK };
+    enum Color { RB_RED, RB_BLACK };
 
     struct Node {
         pair<Key, T> kv;
         Color color;
         Node *left, *right, *parent;
-        Node(const Key &k, const T &v, Color c = RED)
+        Node(const Key &k, const T &v, Color c = RB_RED)
             : kv(k, v), color(c), left(nullptr), right(nullptr), parent(nullptr) {}
     };
 
@@ -99,7 +99,7 @@ public:
 
     void insert(const Key &key, const T &value) {
         Node* z = bstInsert(key, value);
-        if (z->color == RED || z == root) {
+        if (z->color == RB_RED || z == root) {
             insert_fixup(z);
         }
     }
@@ -114,7 +114,7 @@ public:
             if (comp(k, x->kv.first)) x = x->left;
             else x = x->right;
         }
-        Node *z = new Node(k, T(), RED);
+        Node *z = new Node(k, T(), RB_RED);
         z->parent = p;
         if (!p) root = z;
         else if (comp(z->kv.first, p->kv.first)) p->left = z;
@@ -206,7 +206,7 @@ public:
         }
         delete z;
         cnt--;
-        if (y_original_color == BLACK) {
+        if (y_original_color == RB_BLACK) {
             delete_fixup(x);
         }
     }
@@ -295,99 +295,99 @@ private:
     }
 
     void insert_fixup(Node *z) {
-        while (z->parent && z->parent->color == RED) {
+        while (z->parent && z->parent->color == RB_RED) {
             Node *gp = z->parent->parent;
             if (!gp) break;
             if (z->parent == gp->left) {
                 Node *y = gp->right;
-                if (y && y->color == RED) {
-                    z->parent->color = BLACK;
-                    y->color = BLACK;
-                    gp->color = RED;
+                if (y && y->color == RB_RED) {
+                    z->parent->color = RB_BLACK;
+                    y->color = RB_BLACK;
+                    gp->color = RB_RED;
                     z = gp;
                 } else {
                     if (z == z->parent->right) {
                         z = z->parent;
                         rotate_left(z);
                     }
-                    z->parent->color = BLACK;
-                    gp->color = RED;
+                    z->parent->color = RB_BLACK;
+                    gp->color = RB_RED;
                     rotate_right(gp);
                 }
             } else {
                 Node *y = gp->left;
-                if (y && y->color == RED) {
-                    z->parent->color = BLACK;
-                    y->color = BLACK;
-                    gp->color = RED;
+                if (y && y->color == RB_RED) {
+                    z->parent->color = RB_BLACK;
+                    y->color = RB_BLACK;
+                    gp->color = RB_RED;
                     z = gp;
                 } else {
                     if (z == z->parent->left) {
                         z = z->parent;
                         rotate_right(z);
                     }
-                    z->parent->color = BLACK;
-                    gp->color = RED;
+                    z->parent->color = RB_BLACK;
+                    gp->color = RB_RED;
                     rotate_left(gp);
                 }
             }
         }
-        if (root) root->color = BLACK;
+        if (root) root->color = RB_BLACK;
     }
 
     void delete_fixup(Node* x) {
-        while (x != root && (!x || x->color == BLACK)) {
+        while (x != root && (!x || x->color == RB_BLACK)) {
             if (x == x->parent->left) {
                 Node* w = x->parent->right;
-                if (w->color == RED) {
-                    w->color = BLACK;
-                    x->parent->color = RED;
+                if (w->color == RB_RED) {
+                    w->color = RB_BLACK;
+                    x->parent->color = RB_RED;
                     rotate_left(x->parent);
                     w = x->parent->right;
                 }
-                if ((!w->left || w->left->color == BLACK) && (!w->right || w->right->color == BLACK)) {
-                    w->color = RED;
+                if ((!w->left || w->left->color == RB_BLACK) && (!w->right || w->right->color == RB_BLACK)) {
+                    w->color = RB_RED;
                     x = x->parent;
                 } else {
-                    if (!w->right || w->right->color == BLACK) {
-                        if (w->left) w->left->color = BLACK;
-                        w->color = RED;
+                    if (!w->right || w->right->color == RB_BLACK) {
+                        if (w->left) w->left->color = RB_BLACK;
+                        w->color = RB_RED;
                         rotate_right(w);
                         w = x->parent->right;
                     }
                     w->color = x->parent->color;
-                    x->parent->color = BLACK;
-                    if (w->right) w->right->color = BLACK;
+                    x->parent->color = RB_BLACK;
+                    if (w->right) w->right->color = RB_BLACK;
                     rotate_left(x->parent);
                     x = root;
                 }
             } else {
                 Node* w = x->parent->left;
-                if (w->color == RED) {
-                    w->color = BLACK;
-                    x->parent->color = RED;
+                if (w->color == RB_RED) {
+                    w->color = RB_BLACK;
+                    x->parent->color = RB_RED;
                     rotate_right(x->parent);
                     w = x->parent->left;
                 }
-                if ((!w->right || w->right->color == BLACK) && (!w->left || w->left->color == BLACK)) {
-                    w->color = RED;
+                if ((!w->right || w->right->color == RB_BLACK) && (!w->left || w->left->color == RB_BLACK)) {
+                    w->color = RB_RED;
                     x = x->parent;
                 } else {
-                    if (!w->left || w->left->color == BLACK) {
-                        if (w->right) w->right->color = BLACK;
-                        w->color = RED;
+                    if (!w->left || w->left->color == RB_BLACK) {
+                        if (w->right) w->right->color = RB_BLACK;
+                        w->color = RB_RED;
                         rotate_left(w);
                         w = x->parent->left;
                     }
                     w->color = x->parent->color;
-                    x->parent->color = BLACK;
-                    if (w->left) w->left->color = BLACK;
+                    x->parent->color = RB_BLACK;
+                    if (w->left) w->left->color = RB_BLACK;
                     rotate_right(x->parent);
                     x = root;
                 }
             }
         }
-        if (x) x->color = BLACK;
+        if (x) x->color = RB_BLACK;
     }
 };
 

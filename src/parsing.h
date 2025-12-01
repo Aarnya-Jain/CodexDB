@@ -126,7 +126,7 @@ class DatabaseManager {
 
 class Parser {
     vector<string> tokens;
-    int current = 0;
+    size_t current = 0;
 
 public:
     Parser(const vector<string>& toks) : tokens(toks) {}
@@ -247,7 +247,7 @@ private:
         }
 
         vector<string> row;
-        int i=0;
+        size_t i=0;
         // int n=tokens.size();
         // if(tokens[n-1]==";"){
         //     if(tokens[n-2]!=")"){
@@ -380,7 +380,7 @@ private:
             }
 
             vector<string> row;
-            int i=0;
+            size_t i=0;
             while(i<tokens.size() && tokens[i]!="(")i++;
             i++;
             while(i<tokens.size() ){
@@ -471,7 +471,7 @@ private:
         }
 
         vector<string> row;
-        int i=0;
+        size_t i=0;
         while(i<tokens.size() && tokens[i]!="(")i++;
         i++;
         while(i<tokens.size() ){
@@ -786,4 +786,3 @@ void ExecutionEngine::runAdd(const AddQuery& q){
     t.addcol(data,q.values,dbManager->getCurrentDatabase(),q.table);
 
 }
-

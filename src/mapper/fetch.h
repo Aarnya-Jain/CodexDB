@@ -52,18 +52,18 @@ HashMap<string, vector<string>> fetch_structure() {
 
     string line;
     while (getline(file, line)) {
-        // Trim whitespace
+
         line.erase(0, line.find_first_not_of(" \t\r\n"));
         line.erase(line.find_last_not_of(" \t\r\n") + 1);
 
-        if (line.empty()) continue;  // skip blank lines
+        if (line.empty()) continue;
 
         stringstream ss(line);
         string db, table;
         getline(ss, db, ',');
         db = toupper(db);
 
-        if (db.empty()) continue; // skip malformed line
+        if (db.empty()) continue;
 
         vector<string> tables;
         while (getline(ss, table, ',')) {
@@ -81,7 +81,6 @@ HashMap<string, vector<string>> fetch_structure() {
     return tree;
 }
 
-// THE TASKS BELOW WORK TO UPDATE THE structure FOLDER --
 
 void save_structure(HashMap<string, vector<string>>& tree) {
     string path = "./structure/structure.csv";
@@ -149,4 +148,4 @@ void remove_table(HashMap<string, vector<string>> &tree, string db_name, string 
     }
 }
 
-#endif // FETCH_H
+#endif 

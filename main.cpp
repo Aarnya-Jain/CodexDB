@@ -46,6 +46,10 @@ void printlogo(const std::string& filePath) {
     cout << "\n";
 }
 
+void clear_screen() {
+    cout << "\033[2J\033[1;1H";
+}
+
 void TrimTheColon(string &cmd){
     // removing the semicolon from the string if present
         while(!cmd.empty() && (isspace(cmd.back()) || cmd.back() == ';')) {
@@ -82,8 +86,9 @@ bool check_general(vector<string> &tokens){
 
 int main(){
 
+    enableVTMode(); // Only works to call the Virtual Terminal mode in windows ..
     clear_screen();
-    printlogo("./public/logo.txt");
+    printlogo(logo);
 
     while(1)
     {
@@ -98,7 +103,7 @@ int main(){
             continue;
         }
 
-        TrimTheColon(cmd); // trim called to handle ';' and other trailing spaces at the end
+        TrimTheColon(cmd); // trim called to handle ';' and other trailing whitespaces at the end
 
         if(!strcasecmp(cmd.c_str(),"EXIT")){
             cout << "Exiting the running instance ... \n\n";
@@ -108,9 +113,6 @@ int main(){
         // calling the lexer , parser and the execution engine
         lex l;
         vector<string> tokens = l.tokenize(cmd);
-
-            // for (auto &t : tokens) cout << "[" << t << "] ";
-            // cout << endl;
 
         // checking for general commands
         if(check_general(tokens)) continue;
