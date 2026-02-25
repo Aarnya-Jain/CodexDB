@@ -32,7 +32,7 @@ The system supports core SQL operations, including:
 
 ## Why Red-Black Tree?
 
-We chose Red-Black Trees for in-memory data storage after benchmarking against AVL Trees and B+ Trees. For 100,000 rows, Red-Black Trees demonstrated the best performance.
+We chose Red-Black Trees for in-memory data storage after benchmarking against AVL Trees and B+ Trees. For 100,000 rows, Red-Black Trees demonstrated the best performance compared to other data structures.
 
 | Data Structure | Time (Seconds) |
 | :--- | :--- |
